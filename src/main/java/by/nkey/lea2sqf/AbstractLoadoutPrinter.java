@@ -28,14 +28,15 @@ public abstract class AbstractLoadoutPrinter {
         StringBuilder builder = new StringBuilder();
         builder.append(prolog());
         Loadout loadout = profile.getLoadout();
+        builder.append("removeAllWeapons ").append(unitId()).append(";\n");
+        builder.append("removeAllAssignedItems ").append(unitId()).append(";\n");
+        builder.append("removeAllItems ").append(unitId()).append(";\n");
+        builder.append("removeHeadgear ").append(unitId()).append(";\n");
+        builder.append("removeVest ").append(unitId()).append(";\n");
+
+        removeBackpack(builder);
         if (!loadout.isKeepDefaultUniform()) {
-            removeBackpack(builder);
-            builder.append("removeAllWeapons ").append(unitId()).append(";\n");
-            builder.append("removeAllAssignedItems ").append(unitId()).append(";\n");
-            builder.append("removeAllItems ").append(unitId()).append(";\n");
-            builder.append("removeHeadgear ").append(unitId()).append(";\n");
             builder.append("removeUniform ").append(unitId()).append(";\n");
-            builder.append("removeVest ").append(unitId()).append(";\n");
         }
 
         addWeapon(builder, loadout.getGoggles());
@@ -50,7 +51,9 @@ public abstract class AbstractLoadoutPrinter {
         linkItem(builder, loadout.getGps());
         linkItem(builder, loadout.getWatch());
 
-        addUniform(builder, loadout.getUniform());
+        if (!loadout.isKeepDefaultUniform()) {
+            addUniform(builder, loadout.getUniform());
+        }
         addVest(builder, loadout.getVest());
 
         addBackpack(builder, loadout.getBackpack());
@@ -111,11 +114,13 @@ public abstract class AbstractLoadoutPrinter {
             }
         }
 
+
         if (loadout.getUniform() != null) {
             if (loadout.getUniform().getDomainObjects() != null) {
                 processInventory(builder, loadout.getUniform().getDomainObjects());
             }
         }
+
 
         if (loadout.getVest() != null) {
             if (loadout.getVest().getDomainObjects() != null) {
