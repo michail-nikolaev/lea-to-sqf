@@ -15,13 +15,13 @@ public class BG3LoadoutPrinter extends AbstractLoadoutPrinter {
 
     @Override
     protected String prolog() {
-        return "_unit = _this select 0;\n";
+        return "";
 
     }
 
     @Override
     protected String unitId() {
-        return "_unit";
+        return "_this";
     }
 
 }

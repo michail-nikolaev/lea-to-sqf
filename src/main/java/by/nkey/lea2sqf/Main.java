@@ -11,9 +11,9 @@ import java.nio.file.Paths;
 
 public class Main {
     public static final String PROFILES_LOCATION = "profiles/units";
-    public static final String PROFILES_CONVERTED_ZEALOT = "profiles/units/zealot";
-    public static final String PROFILES_CONVERTED_BG3 = "profiles/units/bg3";
-    public static final String PROFILES_CONVERTED_EDITOR = "profiles/units/editor";
+    public static final String PROFILES_CONVERTED_ZEALOT = "profiles/converted/zealot";
+    public static final String PROFILES_CONVERTED_BG3 = "profiles/converted/bg3";
+    public static final String PROFILES_CONVERTED_EDITOR = "profiles/converted/editor";
 
     public static void main(String[] args) throws IOException {
         ProfileDAO profileDAO = new ProfileDAO();
@@ -23,22 +23,38 @@ public class Main {
         Files.createDirectories(Paths.get(PROFILES_CONVERTED_BG3));
         Files.createDirectories(Paths.get(PROFILES_CONVERTED_EDITOR));
 
-        try (DirectoryStream<Path> paths = Files.newDirectoryStream(Paths.get(PROFILES_LOCATION))) {
+        Path directory = Paths.get(PROFILES_LOCATION);
+
+        processDirectory(profileDAO, directory);
+
+        System.out.print("Done");
+        System.in.read();
+    }
+
+    private static void processDirectory(ProfileDAO profileDAO, Path directory) throws IOException {
+        try (DirectoryStream<Path> paths = Files.newDirectoryStream(directory)) {
             for (Path path : paths) {
                 if (path.toAbsolutePath().toString().endsWith("lea.profile")) {
                     Profile profile = profileDAO.loadProfile(path.toFile());
                     System.out.println("Converting " + profile.getProfileName());
-                    Files.write(Paths.get(PROFILES_CONVERTED_ZEALOT, profile.getProfileName() + ".sqf"),
-                            new ZealotLoadoutPrinter(profile).print().getBytes());
-                    Files.write(Paths.get(PROFILES_CONVERTED_BG3, profile.getProfileName() + ".sqf"),
-                            new BG3LoadoutPrinter(profile).print().getBytes());
-                    Files.write(Paths.get(PROFILES_CONVERTED_EDITOR, profile.getProfileName() + ".sqf"),
-                            new EditorLoadoutPrinter(profile).print().getBytes());
+                    writeProfile(Paths.get(PROFILES_CONVERTED_ZEALOT,
+                            Paths.get(PROFILES_LOCATION).relativize(directory).toString(),
+                            profile.getProfileName() + ".sqf"), new ZealotLoadoutPrinter(profile).print().getBytes());
+                    writeProfile(Paths.get(PROFILES_CONVERTED_BG3,
+                            Paths.get(PROFILES_LOCATION).relativize(directory).toString(),
+                            profile.getProfileName() + ".sqf"), new BG3LoadoutPrinter(profile).print().getBytes());
+                    writeProfile(Paths.get(PROFILES_CONVERTED_EDITOR,
+                            Paths.get(PROFILES_LOCATION).relativize(directory).toString(),
+                            profile.getProfileName() + ".sqf"), new EditorLoadoutPrinter(profile).print().getBytes());
+                } else if ((!path.toString().equals(".")) && path.toFile().isDirectory()) {
+                    processDirectory(profileDAO, path);
                 }
             }
         }
+    }
 
-        System.out.print("Done");
-        System.in.read();
+    private static void writeProfile(Path path, byte[] bytes) throws IOException {
+        path.getParent().toFile().mkdirs();
+        Files.write(path, bytes);
     }
 }

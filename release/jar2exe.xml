@@ -2,8 +2,8 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>G:\Dev\arma\lea-to-sqf\build\libs\lea-to-sqf-1.0.jar</jar>
-  <outfile>G:\Dev\arma\lea-to-sqf\release\1.1\lea2sqf.exe</outfile>
+  <jar>G:\Dev\arma\lea-to-sqf\build\libs\lea-to-sqf-1.2.jar</jar>
+  <outfile>G:\Dev\arma\lea-to-sqf\release\1.2\lea2sqf.exe</outfile>
   <errTitle>Нужно установить Java</errTitle>
   <cmdLine></cmdLine>
   <chdir></chdir>
