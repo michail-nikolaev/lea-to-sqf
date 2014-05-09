@@ -28,7 +28,6 @@ public class Main {
         processDirectory(profileDAO, directory);
 
         System.out.print("Done");
-        System.in.read();
     }
 
     private static void processDirectory(ProfileDAO profileDAO, Path directory) throws IOException {

@@ -140,7 +140,7 @@ public abstract class AbstractLoadoutPrinter {
                 }
                 magazines.put(item.getClassname(), magazines.get(item.getClassname()) + 1);
             } else if (item instanceof Item) {
-                builder.append(unitId()).append("  addItem[\"").append(item.getClassname()).append("\", 1];\n");
+                builder.append(unitId()).append(" addItem\"").append(item.getClassname()).append("\";\n");
             }
         }
         for (Map.Entry<String, Integer> magAndNumber : magazines.entrySet()) {
